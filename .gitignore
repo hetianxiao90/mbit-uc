@@ -1,0 +1,32 @@
+# 编译生成的文件
+*.exe
+*.out
+*.log
+*.dump
+
+# 依赖库和工具
+/vendor/
+/node_modules/
+/.idea/
+/.vscode/
+
+# 运行时生成的文件
+/tmp/
+/logs/
+/data/
+
+# 配置文件
+/config/
+/secrets/
+/nacos/
+
+# 测试相关文件
+/test/
+/coverage/
+
+# 文档生成文件
+/docs/
+
+# IDE生成文件
+.DS_Store
+Thumbs.db
