@@ -17,7 +17,7 @@ func (c *CountryController) List(ctx *gin.Context) {
 	var country = models.Country{}
 	list, err := country.List()
 	if err != nil {
-		logger.Errorf("CountryController List err:%v", err)
+		logger.Logger.Errorf("CountryController List err:%v", err)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, list)
 		return
 	}

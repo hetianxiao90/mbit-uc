@@ -25,7 +25,7 @@ type checkRequest struct {
 func (c *CaptchaController) Get(ctx *gin.Context) {
 	err, v := captcha.GetSlideBasic()
 	if err != nil {
-		logger.Error(err)
+		logger.Logger.Error(err)
 		c.JsonResp(ctx, constant.CAPTCHA_GET_ERROR, nil)
 		return
 	}
@@ -33,7 +33,7 @@ func (c *CaptchaController) Get(ctx *gin.Context) {
 	key := helper.StringToMD5(string(dotsByte) + strconv.FormatInt(util.RandInt64(1000, 9999), 10))
 	err = redis.Client.Set(key, dotsByte)
 	if err != nil {
-		logger.Error(err)
+		logger.Logger.Error(err)
 		c.JsonResp(ctx, constant.CAPTCHA_GET_ERROR, nil)
 		return
 	}
@@ -74,7 +74,7 @@ func (c *CaptchaController) Check(ctx *gin.Context) {
 	}
 	err = redis.Client.Set(req.Key+constant.REDIS_CAPTCHA_PASS_KEY, true)
 	if err != nil {
-		logger.Error(err)
+		logger.Logger.Error(err)
 		c.JsonResp(ctx, constant.CAPTCHA_CHECK_ERROR, nil)
 		return
 	}

@@ -80,6 +80,13 @@ type RabbitMqQueues struct {
 type RabbitMqRoutingKey struct {
 	Public string `yaml:"public"`
 }
+
+type Jwt struct {
+	AccessTokenExpiredTime  int64  `json:"access_token_timeout" mapstructure:"access_token_expired_time"`
+	RefreshTokenExpiredTime int64  `json:"refresh_token_timeout" mapstructure:"refresh_token_expired_time"`
+	Secret                  string `json:"secret"`
+}
+
 type MyConfig struct {
 	*App
 	*Mysql
@@ -87,6 +94,7 @@ type MyConfig struct {
 	*Redis
 	*RabbitMq
 	*Log
+	*Jwt
 }
 
 func Init() {

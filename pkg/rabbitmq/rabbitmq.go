@@ -71,7 +71,7 @@ func (p *AMQPConnectionPool) DeclareInit(data []DeclareData) error {
 		if d.QueueName != "" {
 			_, err = ch.QueueDeclare(d.QueueName, true, false, false, false, nil)
 			if err != nil {
-				logger.Errorf("Failed to declare an exchange: %v", err)
+				logger.Logger.Errorf("Failed to declare an exchange: %v", err)
 				return err
 			}
 		}
@@ -79,12 +79,12 @@ func (p *AMQPConnectionPool) DeclareInit(data []DeclareData) error {
 		if d.ExchangeName != "" {
 			err = ch.ExchangeDeclare(d.ExchangeName, "topic", true, false, false, false, nil)
 			if err != nil {
-				logger.Errorf("Failed to declare an queue: %v", err)
+				logger.Logger.Errorf("Failed to declare an queue: %v", err)
 				return err
 			}
 			err = ch.QueueBind(d.QueueName, d.RoutingKey, d.ExchangeName, false, nil)
 			if err != nil {
-				logger.Errorf("Failed to bind the queue to the exchange: %v", err)
+				logger.Logger.Errorf("Failed to bind the queue to the exchange: %v", err)
 				return err
 			}
 		}
@@ -219,7 +219,7 @@ func (p *AMQPConnectionPool) Close() {
 		conn := <-p.conns
 		err := conn.Close()
 		if err != nil {
-			logger.Errorf("Error closing connection pool: %v", err)
+			logger.Logger.Errorf("Error closing connection pool: %v", err)
 		}
 	}
 }

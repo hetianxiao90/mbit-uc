@@ -29,7 +29,7 @@ func (c *EmailController) SendCode(ctx *gin.Context) {
 	// 校验邮箱格式
 	isEmail, err := util.CheckEmail(req.Email)
 	if err != nil {
-		logger.Errorf("SendEmail util.CheckEmail err:%v", err)
+		logger.Logger.Errorf("SendEmail util.CheckEmail err:%v", err)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, nil)
 		return
 	}
@@ -68,7 +68,7 @@ func (c *EmailController) handleSendRegisterCode(ctx *gin.Context, req *types.Se
 	}
 	userData, err := user.FindUserByEmail()
 	if err != nil {
-		logger.Error("handleRegisterCode FindUserByEmail error:", err, req)
+		logger.Logger.Error("handleRegisterCode FindUserByEmail error:", err, req)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, nil)
 		return
 	}
@@ -80,7 +80,7 @@ func (c *EmailController) handleSendRegisterCode(ctx *gin.Context, req *types.Se
 	code := util.RandInt64(100000, 999999)
 	err = redis.Client.Set(req.Email+constant.REDIS_EMAIL_SEND_REGISTER_CODE+strconv.Itoa(int(req.Behavior)), code)
 	if err != nil {
-		logger.Errorf("handleRegisterCode redis.Client.Set: %v", err)
+		logger.Logger.Errorf("handleRegisterCode redis.Client.Set: %v", err)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, nil)
 		return
 	}
@@ -99,7 +99,7 @@ func (c *EmailController) handleSendRegisterCode(ctx *gin.Context, req *types.Se
 		amqpDataJson,
 	)
 	if err != nil {
-		logger.Errorf("handleRegisterCode rabbitmq.AMQP.Publish: %v", err)
+		logger.Logger.Errorf("handleRegisterCode rabbitmq.AMQP.Publish: %v", err)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, nil)
 		return
 	}
@@ -117,7 +117,7 @@ func (c *EmailController) CheckCode(ctx *gin.Context) {
 	// 校验邮箱格式
 	isEmail, err := util.CheckEmail(req.Email)
 	if err != nil {
-		logger.Errorf("CheckEmailCode util.CheckEmail err:%v", err)
+		logger.Logger.Errorf("CheckEmailCode util.CheckEmail err:%v", err)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, nil)
 		return
 	}

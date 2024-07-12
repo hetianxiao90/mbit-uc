@@ -4,6 +4,7 @@ go 1.21.4
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/nacos-group/nacos-sdk-go/v2 v2.2.6
 	github.com/redis/go-redis/v9 v9.5.3

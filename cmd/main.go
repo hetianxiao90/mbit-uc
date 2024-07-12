@@ -14,34 +14,23 @@ import (
 	"uc/configs"
 	"uc/internal/router"
 	"uc/pkg/email"
+	"uc/pkg/jwt"
 	"uc/pkg/logger"
 	"uc/pkg/mysql"
-	rabbitmq2 "uc/pkg/rabbitmq"
+	"uc/pkg/rabbitmq"
 	"uc/pkg/redis"
 )
 
 func main() {
-
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	// 配置初始化
 	configs.Init()
-
-	// 邮箱初始化
 	email.Init()
-
-	// 日志初始化
 	logger.Init()
-
-	// mysql初始化
 	mysql.Init()
-
-	// redis 初始化
 	redis.Init()
-
-	// rabbitmq初始化
-	rabbitmq2.Init()
-	go rabbitmq2.SendEmailStart()
+	jwt.Init()
+	rabbitmq.Init()
+	go rabbitmq.SendEmailStart()
 	// 路由初始化
 	r := router.Init()
 
@@ -68,24 +57,24 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
-		logger.Error("server shutdown err:", err)
+		logger.Logger.Error("server shutdown err:", err)
 		fmt.Printf("server shutdown: %v ", err)
 	}
 
 	// 关闭DB
 	if err := mysql.DBS.Close(); err != nil {
-		logger.Error("DBS Close err:", err)
+		logger.Logger.Error("DBS Close err:", err)
 		fmt.Printf("DBS Close: %v", err)
 	}
 
 	// 关闭redis
 	if err := redis.Client.Close(); err != nil {
-		logger.Error("redis Close err:", err)
+		logger.Logger.Error("redis Close err:", err)
 		fmt.Printf("redis Close: %v", err)
 	}
 
 	// 关闭rabbitmq
-	rabbitmq2.AMQP.Close()
+	rabbitmq.AMQP.Close()
 	fmt.Println("Server exited gracefully")
 
 }

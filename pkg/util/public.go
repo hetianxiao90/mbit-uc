@@ -1,8 +1,11 @@
 package util
 
 import (
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"math/big"
 	"regexp"
@@ -74,4 +77,10 @@ func GenerateSalt(length int) (string, error) {
 		return "", err
 	}
 	return base64.StdEncoding.EncodeToString(saltBytes), nil
+}
+
+func HashPassword(password, salt string) string {
+	hash := hmac.New(sha256.New, []byte(salt))
+	hash.Write([]byte(password))
+	return hex.EncodeToString(hash.Sum(nil))
 }

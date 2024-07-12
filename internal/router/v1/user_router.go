@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"uc/internal/controller"
+	"uc/internal/router/middleware"
 )
 
 func UserRouter(e *gin.Engine) {
@@ -13,9 +14,14 @@ func UserRouter(e *gin.Engine) {
 		r.GET("/email/code", email.SendCode)
 		r.POST("/email/code", email.CheckCode)
 		r.POST("/register", user.Register)
-		ur := r.Group("/user")
+		r.POST("/login", user.Login)
+		r.GET("/refresh_token", user.RefreshToken)
+
+		// 需要鉴权的接口
+		ur := r.Use(middleware.JwtMiddleware())
 		{
-			ur.GET("/email/code", email.SendCode)
+			ur.GET("/user", user.Info)
+
 		}
 	}
 }

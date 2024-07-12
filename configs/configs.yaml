@@ -65,3 +65,7 @@ rabbitmq:
     send_email: "send_email_queue"
   routing_key:
     public: "#"
+jwt:
+  access_token_expired_time: 2
+  refresh_token_expired_time: 720
+  secret: "0KV8xHl6uLeVzQtCZQ0FTpaRO1oTBYRKx9bHzv5ABHKWw3jZExQ9YtnS2OA1VEa1Vo87a3kUyYbcMYQN2cPBWBOiA3DglOgUycPz83EEDf1kjm5RCtF9fdNwKG3c8VKg7gC0DvJgh6XfOjWflCzfWB1vZb8ozPcoYejUBA7DHMMGiHMzLHDlaIhNCznCEzRssIU92YhIf0bTJnST78v0JfayPM0XNiGKekfQYX03yggE77Ky1AgrGpa61qCHiDiI"

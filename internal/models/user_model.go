@@ -26,9 +26,8 @@ func (u *User) TableName() string {
 // FindUserByEmail 根据email查找user
 func (u *User) FindUserByEmail() (*User, error) {
 	user := &User{}
-	err := mysql.DBG.Where("email = ?", u.Email).Select("email").First(&user).Error
+	err := mysql.DBG.Where("email = ?", u.Email).First(&user).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-
 		return nil, err
 	}
 	return user, nil
@@ -38,4 +37,13 @@ func (u *User) FindUserByEmail() (*User, error) {
 func (u *User) Create() error {
 	err := mysql.DBG.Create(u).Error
 	return err
+}
+
+func (u *User) FindUserByUid() (*User, error) {
+	user := &User{}
+	err := mysql.DBG.Where("uid = ?", u.UID).First(&user).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	return user, nil
 }
