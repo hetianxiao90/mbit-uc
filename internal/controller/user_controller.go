@@ -7,11 +7,11 @@ import (
 	"time"
 	"uc/internal/constant"
 	"uc/internal/enum"
-	"uc/internal/logger"
 	"uc/internal/models"
-	"uc/internal/redis"
 	"uc/internal/types"
-	"uc/internal/util"
+	"uc/pkg/logger"
+	"uc/pkg/redis"
+	"uc/pkg/util"
 )
 
 type UserController struct {

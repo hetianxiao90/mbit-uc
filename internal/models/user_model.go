@@ -4,7 +4,7 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"uc/internal/enum"
-	"uc/internal/mysql"
+	"uc/pkg/mysql"
 )
 
 type User struct {

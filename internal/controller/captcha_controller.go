@@ -5,11 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/wenlng/go-captcha-assets/helper"
 	"strconv"
-	"uc/internal/captcha"
 	"uc/internal/constant"
-	"uc/internal/logger"
-	"uc/internal/redis"
-	"uc/internal/util"
+	"uc/pkg/captcha"
+	"uc/pkg/logger"
+	"uc/pkg/redis"
+	"uc/pkg/util"
 )
 
 type CaptchaController struct {

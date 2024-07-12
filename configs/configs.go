@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
-	"uc/internal/nacos"
+	"uc/pkg/nacos"
 )
 
 const (

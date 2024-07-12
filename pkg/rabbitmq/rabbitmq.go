@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 	"uc/configs"
-	"uc/internal/logger"
+	"uc/pkg/logger"
 
 	"github.com/streadway/amqp"
 )

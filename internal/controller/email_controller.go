@@ -7,12 +7,12 @@ import (
 	"uc/configs"
 	"uc/internal/constant"
 	"uc/internal/enum"
-	"uc/internal/logger"
 	"uc/internal/models"
-	"uc/internal/rabbitmq"
-	"uc/internal/redis"
 	"uc/internal/types"
-	"uc/internal/util"
+	"uc/pkg/logger"
+	"uc/pkg/rabbitmq"
+	"uc/pkg/redis"
+	"uc/pkg/util"
 )
 
 type EmailController struct {

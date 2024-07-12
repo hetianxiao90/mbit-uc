@@ -6,9 +6,9 @@ import (
 	"html/template"
 	"uc/configs"
 	"uc/internal/constant"
-	"uc/internal/logger"
 	"uc/internal/types"
-	"uc/internal/util/email"
+	"uc/pkg/email"
+	"uc/pkg/logger"
 )
 
 func SendEmailStart() {

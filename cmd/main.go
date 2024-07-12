@@ -12,12 +12,12 @@ import (
 	"syscall"
 	"time"
 	"uc/configs"
-	"uc/internal/logger"
-	"uc/internal/mysql"
-	"uc/internal/rabbitmq"
-	"uc/internal/redis"
 	"uc/internal/router"
-	"uc/internal/util/email"
+	"uc/pkg/email"
+	"uc/pkg/logger"
+	"uc/pkg/mysql"
+	rabbitmq2 "uc/pkg/rabbitmq"
+	"uc/pkg/redis"
 )
 
 func main() {
@@ -40,8 +40,8 @@ func main() {
 	redis.Init()
 
 	// rabbitmq初始化
-	rabbitmq.Init()
-	go rabbitmq.SendEmailStart()
+	rabbitmq2.Init()
+	go rabbitmq2.SendEmailStart()
 	// 路由初始化
 	r := router.Init()
 
@@ -52,7 +52,7 @@ func main() {
 	}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			fmt.Printf("listen: %s", err)
+			panic(err)
 		}
 	}()
 
@@ -85,7 +85,7 @@ func main() {
 	}
 
 	// 关闭rabbitmq
-	rabbitmq.AMQP.Close()
+	rabbitmq2.AMQP.Close()
 	fmt.Println("Server exited gracefully")
 
 }

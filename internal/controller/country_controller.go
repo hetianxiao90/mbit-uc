@@ -3,8 +3,8 @@ package Controller
 import (
 	"github.com/gin-gonic/gin"
 	"uc/internal/constant"
-	"uc/internal/logger"
 	"uc/internal/models"
+	"uc/pkg/logger"
 )
 
 type CountryController struct {

@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"gorm.io/gorm"
-	"uc/internal/mysql"
+	"uc/pkg/mysql"
 )
 
 type Country struct {
