@@ -197,14 +197,8 @@ func (p *AMQPConnectionPool) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	fmt.Println("start close AMQPConnectionPool")
 	for len(p.conns) > 0 {
 		conn := <-p.conns
 		conn.Close()
 	}
-	for conn := range p.conns {
-		conn.Close() // 关闭连接
-	}
-	p.conns = nil // 或者重置为初始状态
-	fmt.Println("end close AMQPConnectionPool")
 }

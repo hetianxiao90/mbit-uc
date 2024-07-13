@@ -177,7 +177,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 		return
 	}
 	// 登录通过获取Token TODO 要做退出登录需要存入redis
-	token, refreshToken, err := jwt.CreateToken(findUserByEmailData.UID)
+	accessToken, refreshToken, err := jwt.CreateToken(findUserByEmailData.UID)
 	if err != nil {
 		logger.Logger.Errorf("Login jwt.CreateToken err: %v", err)
 		c.JsonResp(ctx, constant.SYSTEM_ERROR, nil)
@@ -187,7 +187,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 		UID:          findUserByEmailData.UID,
 		Username:     findUserByEmailData.Username,
 		Email:        util.EncryptionEmail(findUserByEmailData.Email),
-		AccessToken:  token,
+		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 	c.JsonResp(ctx, constant.SUCCESS, loginResult)
