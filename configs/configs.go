@@ -60,16 +60,15 @@ type Redis struct {
 }
 
 type RabbitMq struct {
-	Host        string              `yaml:"host"`
-	Port        int                 `yaml:"port"`
-	Username    string              `yaml:"username"`
-	Password    string              `yaml:"password"`
-	MaxOpen     int                 `yaml:"max_open" mapstructure:"max_open"`
-	MaxIdle     int                 `yaml:"max_idle" mapstructure:"max_idle"`
-	MaxAttempts int                 `yaml:"max_attempts" mapstructure:"max_attempts"`
-	Exchanges   *RabbitMqExchange   `yaml:"exchanges"`
-	Queues      *RabbitMqQueues     `yaml:"queues"`
-	RoutingKey  *RabbitMqRoutingKey `yaml:"routing_key" mapstructure:"routing_key"`
+	Host       string              `yaml:"host"`
+	Port       int                 `yaml:"port"`
+	Username   string              `yaml:"username"`
+	Password   string              `yaml:"password"`
+	MaxOpen    int                 `yaml:"max_open" mapstructure:"max_open"`
+	MaxIdle    int                 `yaml:"max_idle" mapstructure:"max_idle"`
+	Exchanges  *RabbitMqExchange   `yaml:"exchanges"`
+	Queues     *RabbitMqQueues     `yaml:"queues"`
+	RoutingKey *RabbitMqRoutingKey `yaml:"routing_key" mapstructure:"routing_key"`
 }
 type RabbitMqExchange struct {
 	User string `yaml:"user"`

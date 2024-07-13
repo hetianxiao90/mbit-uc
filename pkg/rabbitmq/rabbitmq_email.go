@@ -41,9 +41,9 @@ func SendEmailStart() {
 		case msg := <-msgs:
 			logger.Logger.Infof("SendEmailStart sendEmail get:%v", string(msg.Body))
 			err = sendEmail(msg.Body)
+			// 错误有可能是邮箱不存在，所以发送过的邮箱不再处理
 			if err != nil {
 				logger.Logger.Errorf("SendEmailStart sendEmail error:%v", err)
-				return
 			}
 			err = msg.Ack(true)
 			if err != nil {
@@ -85,7 +85,6 @@ func sendEmail(data []byte) error {
 
 	err = email.MyEmail.SendEmail(title, []string{emailSendData.Email}, email.MAIL_TYPE_HTML, body.String())
 	if err != nil {
-		logger.Logger.Errorf("sendEmail email.MyEmail.SendEmail error:%v", err)
 		return err
 	}
 	return nil

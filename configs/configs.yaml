@@ -1,6 +1,6 @@
 app:
   port: 8080
-
+  name: uc
 log:
   error_path: log/error
   info_path: log/info
@@ -39,12 +39,7 @@ email:
 
 redis:
   addr:
-    - "192.168.51.3:7001"
-    - "192.168.51.3:7002"
-    - "192.168.51.3:7003"
-    - "192.168.51.3:7004"
-    - "192.168.51.3:7005"
-    - "192.168.51.3:7006"
+    - "127.0.0.1:6379"
   db: 0
   max_retries: 3
   min_idle_conns: 5
@@ -58,7 +53,6 @@ rabbitmq:
   password: guest
   max_open: 10
   max_idle: 5
-  max_attempts: 5
   exchanges:
     user: "user_exchange"
   queues:

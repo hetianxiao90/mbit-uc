@@ -10,8 +10,8 @@ type SendEmailOptions struct {
 var SendEmailOptionsData = map[enum.MessageBehavior]SendEmailOptions{
 	enum.EmailRegisterCode: {
 		Template: map[string]string{
-			"ZH": "./internal/util/email/template/register_code_zh.html",
-			"EN": "./internal/util/email/template/register_code_en.html",
+			"ZH": "./template/register_code_zh.html",
+			"EN": "./template/register_code_en.html",
 		},
 		Title: map[string]string{
 			"ZH": "欢迎注册《mbit》",

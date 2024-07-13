@@ -54,7 +54,7 @@ func main() {
 	<-quit
 
 	// 关闭http
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		logger.Logger.Error("server shutdown err:", err)
@@ -75,6 +75,7 @@ func main() {
 
 	// 关闭rabbitmq
 	rabbitmq.AMQP.Close()
+
 	fmt.Println("Server exited gracefully")
 
 }

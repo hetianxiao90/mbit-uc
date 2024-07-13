@@ -17,10 +17,9 @@ type AMQPConnectionPool struct {
 	*options
 }
 type options struct {
-	maxOpen     int
-	maxIdle     int
-	maxAttempts int
-	url         string
+	maxOpen int
+	maxIdle int
+	url     string
 }
 
 type DeclareData struct {
@@ -31,9 +30,8 @@ type DeclareData struct {
 
 func Init() {
 	AMQP = NewAMQPConnectionPool(&options{
-		maxOpen:     configs.Config.RabbitMq.MaxOpen,
-		maxIdle:     configs.Config.RabbitMq.MaxIdle,
-		maxAttempts: configs.Config.RabbitMq.MaxAttempts,
+		maxOpen: configs.Config.RabbitMq.MaxOpen,
+		maxIdle: configs.Config.RabbitMq.MaxIdle,
 		url: fmt.Sprintf("amqp://%s:%s@%s:%d/",
 			configs.Config.RabbitMq.Username,
 			configs.Config.RabbitMq.Password,
@@ -101,22 +99,6 @@ func NewAMQPConnectionPool(o *options) *AMQPConnectionPool {
 }
 
 func (p *AMQPConnectionPool) Get() (*amqp.Connection, error) {
-	var conn *amqp.Connection
-	var err error
-	attempts := 0
-
-	for attempts < p.maxAttempts {
-		conn, err = p.GetOne()
-		if err == nil && conn != nil {
-			return conn, nil
-		}
-		attempts++
-	}
-
-	return nil, fmt.Errorf("failed to get a valid connection after %d attempts", p.maxAttempts)
-}
-
-func (p *AMQPConnectionPool) GetOne() (*amqp.Connection, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -215,11 +197,14 @@ func (p *AMQPConnectionPool) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
+	fmt.Println("start close AMQPConnectionPool")
 	for len(p.conns) > 0 {
 		conn := <-p.conns
-		err := conn.Close()
-		if err != nil {
-			logger.Logger.Errorf("Error closing connection pool: %v", err)
-		}
+		conn.Close()
 	}
+	for conn := range p.conns {
+		conn.Close() // 关闭连接
+	}
+	p.conns = nil // 或者重置为初始状态
+	fmt.Println("end close AMQPConnectionPool")
 }
