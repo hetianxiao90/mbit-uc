@@ -8,7 +8,7 @@ import (
 	"gorm.io/plugin/dbresolver"
 	"log"
 	"time"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 var DBG = new(gorm.DB)
@@ -25,11 +25,11 @@ type DBConfig struct {
 
 func Init() {
 	dsn := getDSN(&DBConfig{
-		Username: configs.Config.Mysql.Master.User,
-		Password: configs.Config.Mysql.Master.Password,
-		Host:     configs.Config.Mysql.Master.Host,
-		Port:     configs.Config.Mysql.Master.Port,
-		Database: configs.Config.Mysql.Master.DB,
+		Username: nacos.Config.Mysql.Master.User,
+		Password: nacos.Config.Mysql.Master.Password,
+		Host:     nacos.Config.Mysql.Master.Host,
+		Port:     nacos.Config.Mysql.Master.Port,
+		Database: nacos.Config.Mysql.Master.DB,
 	})
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
@@ -41,7 +41,7 @@ func Init() {
 	}
 
 	var replicas []gorm.Dialector
-	for _, s := range configs.Config.Slaves {
+	for _, s := range nacos.Config.Slaves {
 		dsnSlaves := getDSN(&DBConfig{
 			Username: s.User,
 			Password: s.Password,
@@ -59,9 +59,9 @@ func Init() {
 			Replicas: replicas,
 			Policy:   dbresolver.RandomPolicy{},
 		}).
-			SetMaxOpenConns(configs.Config.Mysql.Base.MaxOpenConn).
-			SetMaxIdleConns(configs.Config.Mysql.Base.MaxIdleConn).
-			SetConnMaxLifetime(time.Duration(configs.Config.Mysql.Base.ConnMaxLifeTime)),
+			SetMaxOpenConns(nacos.Config.Mysql.Base.MaxOpenConn).
+			SetMaxIdleConns(nacos.Config.Mysql.Base.MaxIdleConn).
+			SetConnMaxLifetime(time.Duration(nacos.Config.Mysql.Base.ConnMaxLifeTime)),
 	)
 	if err != nil {
 		log.Fatal("Could not connect to the replicas database:", err)

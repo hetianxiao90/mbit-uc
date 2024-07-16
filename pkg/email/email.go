@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/smtp"
 	"strings"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 const MAIL_TYPE_HTML = "html"
@@ -21,13 +21,13 @@ type Email struct {
 var MyEmail = new(Email)
 
 func Init() {
-	var data = configs.Config
+	var data = nacos.Config
 	fmt.Println(data)
 	MyEmail = &Email{
-		Host:     configs.Config.Email.Host,
-		Port:     configs.Config.Email.Port,
-		Username: configs.Config.Email.Username,
-		Password: configs.Config.Email.Password,
+		Host:     nacos.Config.Email.Host,
+		Port:     nacos.Config.Email.Port,
+		Username: nacos.Config.Email.Username,
+		Password: nacos.Config.Email.Password,
 	}
 	MyEmail.auth = smtp.PlainAuth("", MyEmail.Username, MyEmail.Password, MyEmail.Host)
 }

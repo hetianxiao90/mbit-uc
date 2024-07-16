@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"html/template"
-	"uc/configs"
 	"uc/internal/constant"
 	"uc/internal/types"
 	"uc/pkg/email"
 	"uc/pkg/logger"
+	"uc/pkg/nacos"
 )
 
 func SendEmailStart() {
@@ -31,7 +31,7 @@ func SendEmailStart() {
 	}
 	defer ch.Close()
 
-	msgs, err := ch.Consume(configs.Config.RabbitMq.Queues.SendEmail, "", false, false, false, false, nil)
+	msgs, err := ch.Consume(nacos.Config.RabbitMq.Queues.SendEmail, "", false, false, false, false, nil)
 	if err != nil {
 		logger.Logger.Errorf("SendEmailStart ch.Consume error:%v", err)
 		panic(err)

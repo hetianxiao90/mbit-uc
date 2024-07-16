@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"time"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 type AccessClaim struct {
@@ -29,9 +29,9 @@ func Init() {
 
 func NewMyJwt() *MyJwt {
 	return &MyJwt{
-		AccessTokenExpiredTime:  configs.Config.Jwt.AccessTokenExpiredTime,
-		RefreshTokenExpiredTime: configs.Config.Jwt.RefreshTokenExpiredTime,
-		Secret:                  []byte(configs.Config.Jwt.Secret),
+		AccessTokenExpiredTime:  nacos.Config.Jwt.AccessTokenExpiredTime,
+		RefreshTokenExpiredTime: nacos.Config.Jwt.RefreshTokenExpiredTime,
+		Secret:                  []byte(nacos.Config.Jwt.Secret),
 	}
 }
 func getExpiredTime(hour int64) *jwt.NumericDate {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"time"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 type RedisClient struct {
@@ -16,11 +16,11 @@ type RedisClient struct {
 var RedisClusterClient = new(RedisClient)
 
 func InitCluster() {
-	cof := configs.Config.Redis
+	cof := nacos.Config.Redis
 	RedisClusterClient = NewClusterClient(cof)
 }
 
-func NewClusterClient(config *configs.Redis) *RedisClient {
+func NewClusterClient(config *nacos.Redis) *RedisClient {
 	addrLen := len(config.Addr)
 	if addrLen == 0 {
 		panic(fmt.Sprintf("redis addr nil"))

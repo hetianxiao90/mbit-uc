@@ -3,8 +3,8 @@ package rabbitmq
 import (
 	"fmt"
 	"sync"
-	"uc/configs"
 	"uc/pkg/logger"
+	"uc/pkg/nacos"
 
 	"github.com/streadway/amqp"
 )
@@ -30,22 +30,22 @@ type DeclareData struct {
 
 func Init() {
 	AMQP = NewAMQPConnectionPool(&options{
-		maxOpen: configs.Config.RabbitMq.MaxOpen,
-		maxIdle: configs.Config.RabbitMq.MaxIdle,
+		maxOpen: nacos.Config.RabbitMq.MaxOpen,
+		maxIdle: nacos.Config.RabbitMq.MaxIdle,
 		url: fmt.Sprintf("amqp://%s:%s@%s:%d/",
-			configs.Config.RabbitMq.Username,
-			configs.Config.RabbitMq.Password,
-			configs.Config.RabbitMq.Host,
-			configs.Config.RabbitMq.Port,
+			nacos.Config.RabbitMq.Username,
+			nacos.Config.RabbitMq.Password,
+			nacos.Config.RabbitMq.Host,
+			nacos.Config.RabbitMq.Port,
 		),
 	})
 
 	// 初始化队列
 	err := AMQP.DeclareInit([]DeclareData{
 		{
-			ExchangeName: configs.Config.RabbitMq.Exchanges.User,
-			QueueName:    configs.Config.RabbitMq.Queues.SendEmail,
-			RoutingKey:   configs.Config.RabbitMq.RoutingKey.Public,
+			ExchangeName: nacos.Config.RabbitMq.Exchanges.User,
+			QueueName:    nacos.Config.RabbitMq.Queues.SendEmail,
+			RoutingKey:   nacos.Config.RabbitMq.RoutingKey.Public,
 		},
 	})
 	if err != nil {

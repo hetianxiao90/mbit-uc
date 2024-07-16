@@ -3,12 +3,12 @@ package redis
 import (
 	"fmt"
 	"testing"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 func TestRedis(t *testing.T) {
 
-	client := NewClient(&configs.Redis{
+	client := NewClient(&nacos.Redis{
 		Addr: []string{
 			"127.0.0.1:6379",
 		},

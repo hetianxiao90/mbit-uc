@@ -1,22 +1,16 @@
-package configs
+package nacos
 
 import (
 	"bytes"
 	"fmt"
 	"github.com/spf13/viper"
-	"os"
-	"uc/pkg/nacos"
-)
-
-const (
-	ENV_NACOS_ENDPOINTS = "ENV_NACOS_ENDPOINTS"
-	ENV_APP             = "ENV_APP"
 )
 
 var Config = new(MyConfig)
 
 type App struct {
-	Port int `yaml:"port"`
+	Port int    `yaml:"port"`
+	Name string `yaml:"name"`
 }
 type Log struct {
 	ErrorPath string `yaml:"error_path" mapstructure:"error_path"`
@@ -96,7 +90,7 @@ type MyConfig struct {
 	*Jwt
 }
 
-func Init() {
+func InitConfig() {
 
 	//// 加载配置
 	//viper.SetConfigFile("./configs/configs.yaml")
@@ -118,33 +112,20 @@ func Init() {
 	//	panic(fmt.Errorf("unmarshal failed, err: %v", err))
 	//}
 
-	// 获取nacos节点
-	endpoints, exist := os.LookupEnv(ENV_NACOS_ENDPOINTS)
-	if !exist {
-		panic("ENV_NACOS_ENDPOINTS not exsit")
-	}
-
-	// 获取当前环境
-	envApp, exist := os.LookupEnv(ENV_APP)
-	if !exist {
-		panic("ENV_APP not exsit")
-	}
-
 	// 初始化Nacos配置
-	nacosConfig := nacos.NewNacosConfig(endpoints, envApp, "user_config.yaml", "USER_GROUP")
 
 	// 获取配置信息
-	content, err := nacosConfig.GetConfig()
+	content, err := NacosClient.GetConfig()
 	if err != nil {
 		panic(fmt.Errorf("GetConfig failed, err: %v", err))
 	}
 
 	viper.SetConfigType("yaml")
-	if err := viper.ReadConfig(bytes.NewBuffer([]byte(content))); err != nil {
+	if err = viper.ReadConfig(bytes.NewBuffer([]byte(content))); err != nil {
 		panic(fmt.Errorf("ReadConfig failed, err: %v", err))
 	}
 
-	if err := viper.Unmarshal(&Config); err != nil {
+	if err = viper.Unmarshal(&Config); err != nil {
 		panic(fmt.Errorf("unmarshal failed, err: %v", err))
 	}
 }

@@ -11,21 +11,22 @@ import (
 	"runtime"
 	"syscall"
 	"time"
-	"uc/configs"
 	"uc/internal/router"
 	"uc/pkg/email"
 	"uc/pkg/jwt"
 	"uc/pkg/logger"
 	"uc/pkg/mysql"
+	"uc/pkg/nacos"
 	"uc/pkg/rabbitmq"
 	"uc/pkg/redis"
 )
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	configs.Init()
-	email.Init()
+	nacos.Init()
+	nacos.InitConfig()
 	logger.Init()
+	email.Init()
 	mysql.Init()
 	redis.Init()
 	jwt.Init()
@@ -40,9 +41,11 @@ func main() {
 		Handler: r,
 	}
 	go func() {
+		nacos.RegisterInstance()
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			panic(err)
 		}
+
 	}()
 
 	// -----------------------------优雅退出 -----------------------------
@@ -52,6 +55,9 @@ func main() {
 
 	// 阻塞
 	<-quit
+
+	// 注销服务
+	nacos.DeregisterInstance()
 
 	// 关闭http
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -75,7 +81,6 @@ func main() {
 
 	// 关闭rabbitmq
 	rabbitmq.AMQP.Close()
-
 	fmt.Println("Server exited gracefully")
 
 }

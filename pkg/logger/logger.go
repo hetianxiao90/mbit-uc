@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 	"time"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 var Logger *zap.SugaredLogger
@@ -41,8 +41,8 @@ func Init() {
 		return lvl >= zapcore.WarnLevel
 	})
 	//
-	errorWriter := getWriter(configs.Config.Log.ErrorPath)
-	infoWriter := getWriter(configs.Config.Log.InfoPath)
+	errorWriter := getWriter(nacos.Config.Log.ErrorPath)
+	infoWriter := getWriter(nacos.Config.Log.InfoPath)
 
 	//infoWriter := getWriter("info")
 	//errorWriter := getWriter("error")
@@ -59,9 +59,9 @@ func getWriter(filename string) io.Writer {
 		// demo.YYmmddHH.log
 		strings.Replace(filename, ".log", "", -1)+"-%Y%m%d%H.log",
 		// 保存xxx小时
-		rotatelogs.WithMaxAge(time.Hour*time.Duration(configs.Config.Log.MaxAge)),
+		rotatelogs.WithMaxAge(time.Hour*time.Duration(nacos.Config.Log.MaxAge)),
 		// 按xxx小时切割
-		rotatelogs.WithRotationTime(time.Hour*time.Duration(configs.Config.Log.Rotation)),
+		rotatelogs.WithRotationTime(time.Hour*time.Duration(nacos.Config.Log.Rotation)),
 	)
 	if err != nil {
 		os.Exit(202)

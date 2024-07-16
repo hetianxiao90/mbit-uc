@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"strconv"
-	"uc/configs"
 	"uc/internal/constant"
 	"uc/internal/enum"
 	"uc/internal/models"
 	"uc/internal/types"
 	"uc/pkg/logger"
+	"uc/pkg/nacos"
 	"uc/pkg/rabbitmq"
 	"uc/pkg/redis"
 	"uc/pkg/util"
@@ -94,8 +94,8 @@ func (c *EmailController) handleSendRegisterCode(ctx *gin.Context, req *types.Se
 	//传入mq
 	amqpDataJson, _ := json.Marshal(amqpData)
 	err = rabbitmq.AMQP.Publish(
-		configs.Config.RabbitMq.Exchanges.User,
-		configs.Config.RabbitMq.RoutingKey.Public,
+		nacos.Config.RabbitMq.Exchanges.User,
+		nacos.Config.RabbitMq.RoutingKey.Public,
 		amqpDataJson,
 	)
 	if err != nil {

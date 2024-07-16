@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"time"
-	"uc/configs"
+	"uc/pkg/nacos"
 )
 
 type RDB struct {
@@ -16,12 +16,12 @@ type RDB struct {
 var Client = new(RDB)
 
 func Init() {
-	cof := configs.Config.Redis
+	cof := nacos.Config.Redis
 
 	Client = NewClient(cof)
 }
 
-func NewClient(config *configs.Redis) *RDB {
+func NewClient(config *nacos.Redis) *RDB {
 	addrLen := len(config.Addr)
 	if addrLen == 0 {
 		panic(fmt.Sprintf("redis addr nil"))
