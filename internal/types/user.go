@@ -1,7 +1,7 @@
 package types
 
 type RegisterReq struct {
-	CountryCode      string `json:"country_code" binding:"required"`
+	CountryId        string `json:"country_id" binding:"required"`
 	Email            string `json:"email" binding:"required"`
 	Password         string `json:"password" binding:"required"`
 	VerificationCode string `json:"verification_code" binding:"required"` // 验证码

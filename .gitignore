@@ -19,6 +19,7 @@
 /config/
 /secrets/
 /nacos/
+/proto/
 
 # 测试相关文件
 /test/

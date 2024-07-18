@@ -14,6 +14,7 @@ type User struct {
 	Password   string             `json:"password"`
 	Salt       string             `json:"salt"`
 	Email      string             `json:"email"`
+	CountryId  string             `json:"country_id"`
 	Status     enum.AccountStatus `json:"status"`
 	CreateTime int64              `json:"create_time"`
 	UpdateTime int64              `json:"update_time"`

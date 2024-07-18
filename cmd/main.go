@@ -1,17 +1,15 @@
 package main
 
 import (
-	"context"
-	"errors"
 	"fmt"
-	"github.com/spf13/viper"
-	"net/http"
+	"google.golang.org/grpc"
+	"net"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
-	"time"
-	"uc/internal/router"
+	proto "uc/internal/protoc"
+	"uc/internal/rpc"
 	"uc/pkg/email"
 	"uc/pkg/jwt"
 	"uc/pkg/logger"
@@ -33,20 +31,35 @@ func main() {
 	rabbitmq.Init()
 	go rabbitmq.SendEmailStart()
 	// 路由初始化
-	r := router.Init()
-
-	// 服务启动
-	srv := &http.Server{
-		Addr:    ":" + viper.GetString("app.port"),
-		Handler: r,
+	//r := router.Init()
+	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", nacos.Config.App.Port))
+	if err != nil {
+		fmt.Printf("failed to listen: %v", err)
+		return
 	}
-	go func() {
-		nacos.RegisterInstance()
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			panic(err)
-		}
-
-	}()
+	s := grpc.NewServer()
+	proto.RegisterUcServer(s, &rpc.UserRpc{})
+	proto.RegisterPublicServer(s, &rpc.PublicRpc{})
+	nacos.RegisterInstance()
+	fmt.Println("Serving start...")
+	err = s.Serve(listen)
+	if err != nil {
+		nacos.DeregisterInstance()
+		fmt.Printf("failed to serve: %v", err)
+		return
+	}
+	//// 服务启动
+	//srv := &http.Server{
+	//	Addr:    ":" + viper.GetString("app.port"),
+	//	Handler: r,
+	//}
+	//go func() {
+	//	nacos.RegisterInstance()
+	//	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	//		panic(err)
+	//	}
+	//
+	//}()
 
 	// -----------------------------优雅退出 -----------------------------
 	// 等待中断信号
@@ -60,21 +73,22 @@ func main() {
 	nacos.DeregisterInstance()
 
 	// 关闭http
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		logger.Logger.Error("server shutdown err:", err)
-		fmt.Printf("server shutdown: %v ", err)
-	}
-
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	//defer cancel()
+	//if err := srv.Shutdown(ctx); err != nil {
+	//	logger.Logger.Error("server shutdown err:", err)
+	//	fmt.Printf("server shutdown: %v ", err)
+	//}
+	s.Stop()
+	listen.Close()
 	// 关闭DB
-	if err := mysql.DBS.Close(); err != nil {
+	if err = mysql.DBS.Close(); err != nil {
 		logger.Logger.Error("DBS Close err:", err)
 		fmt.Printf("DBS Close: %v", err)
 	}
 
 	// 关闭redis
-	if err := redis.Client.Close(); err != nil {
+	if err = redis.Client.Close(); err != nil {
 		logger.Logger.Error("redis Close err:", err)
 		fmt.Printf("redis Close: %v", err)
 	}

@@ -50,7 +50,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 	}
 	// 校验国家编码
 	country := models.Country{
-		ID: req.CountryCode,
+		ID: req.CountryId,
 	}
 	countryData, err := country.FindById()
 	if err != nil || countryData.ID == "" {
