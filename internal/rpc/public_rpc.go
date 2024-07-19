@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"uc/internal/constant"
 	"uc/internal/models"
-	proto "uc/internal/protoc"
+	"uc/internal/protoc"
 	"uc/pkg/captcha"
 	"uc/pkg/logger"
 	"uc/pkg/redis"
@@ -15,16 +15,17 @@ import (
 )
 
 type PublicRpc struct {
-	proto.PublicServer
+	protoc.PublicServer
 }
 
-func (pr PublicRpc) GetCaptcha(ctx context.Context, req *proto.PublicReq) (rsp *proto.GetCaptchaRsp, err error) {
+func (pr PublicRpc) GetCaptcha(ctx context.Context, req *protoc.PublicReq) (rsp *protoc.GetCaptchaRsp, err error) {
 	err, v := captcha.GetSlideBasic()
 	if err != nil {
 		logger.Logger.Errorf("GetCaptcha captcha.GetSlideBasic err:%v", err)
-		return &proto.GetCaptchaRsp{
+		return &protoc.GetCaptchaRsp{
 			Code:    constant.CAPTCHA_GET_ERROR,
 			Message: constant.CodeMap[constant.CAPTCHA_GET_ERROR],
+			Data:    &protoc.GetCaptchaRsp_Data{},
 		}, nil
 	}
 	dotsByte, _ := json.Marshal(v.BlockData)
@@ -32,15 +33,16 @@ func (pr PublicRpc) GetCaptcha(ctx context.Context, req *proto.PublicReq) (rsp *
 	err = redis.Client.Set(key, dotsByte)
 	if err != nil {
 		logger.Logger.Errorf("GetCaptcha redis.Client.Set err:%v", err)
-		return &proto.GetCaptchaRsp{
+		return &protoc.GetCaptchaRsp{
 			Code:    constant.CAPTCHA_GET_ERROR,
 			Message: constant.CodeMap[constant.CAPTCHA_GET_ERROR],
+			Data:    &protoc.GetCaptchaRsp_Data{},
 		}, nil
 	}
-	return &proto.GetCaptchaRsp{
-		Code:    constant.CAPTCHA_GET_ERROR,
-		Message: constant.CodeMap[constant.CAPTCHA_GET_ERROR],
-		Data: &proto.GetCaptchaRsp_Data{
+	return &protoc.GetCaptchaRsp{
+		Code:    constant.SUCCESS,
+		Message: constant.CodeMap[constant.SUCCESS],
+		Data: &protoc.GetCaptchaRsp_Data{
 			CaptchaKey:  key,
 			ImageBase64: v.ImageBase64,
 			TileBase64:  v.TileBase64,
@@ -52,14 +54,22 @@ func (pr PublicRpc) GetCaptcha(ctx context.Context, req *proto.PublicReq) (rsp *
 	}, nil
 }
 
-func (pr PublicRpc) PostCaptcha(ctx context.Context, req *proto.PostCaptchaReq) (rsp *proto.PublicRsp, err error) {
+func (pr PublicRpc) PostCaptcha(ctx context.Context, req *protoc.PostCaptchaReq) (rsp *protoc.PublicRsp, err error) {
+	if req.Key == "" || req.Point == "" {
+		return &protoc.PublicRsp{
+			Code:    constant.ENTITY_ERROR,
+			Message: constant.CodeMap[constant.ENTITY_ERROR],
+			Data:    &protoc.PublicRsp_Data{},
+		}, nil
+	}
 
 	captchaData, err := redis.Client.Get(req.Key)
 	if err != nil || len(captchaData) == 0 {
 		logger.Logger.Errorf("PostCaptcha redis.Client.Get err:%v", err)
-		return &proto.PublicRsp{
+		return &protoc.PublicRsp{
 			Code:    constant.CAPTCHA_CHECK_ERROR,
 			Message: constant.CodeMap[constant.CAPTCHA_CHECK_ERROR],
+			Data:    &protoc.PublicRsp_Data{},
 		}, nil
 	}
 	err = captcha.CheckSlide(&captcha.CheckSlideData{
@@ -69,39 +79,43 @@ func (pr PublicRpc) PostCaptcha(ctx context.Context, req *proto.PostCaptchaReq) 
 	})
 	if err != nil {
 		logger.Logger.Errorf("PostCaptcha captcha.CheckSlide err:%v", err)
-		return &proto.PublicRsp{
+		return &protoc.PublicRsp{
 			Code:    constant.CAPTCHA_CHECK_ERROR,
 			Message: constant.CodeMap[constant.CAPTCHA_CHECK_ERROR],
+			Data:    &protoc.PublicRsp_Data{},
 		}, nil
 	}
 	err = redis.Client.Set(req.Key+constant.REDIS_CAPTCHA_PASS_KEY, true)
 	if err != nil {
 		logger.Logger.Errorf("PostCaptcha redis.Client.Set err:%v", err)
-		return &proto.PublicRsp{
+		return &protoc.PublicRsp{
 			Code:    constant.CAPTCHA_CHECK_ERROR,
 			Message: constant.CodeMap[constant.CAPTCHA_CHECK_ERROR],
+			Data:    &protoc.PublicRsp_Data{},
 		}, nil
 	}
-	return &proto.PublicRsp{
+	return &protoc.PublicRsp{
 		Code:    constant.SUCCESS,
 		Message: constant.CodeMap[constant.SUCCESS],
+		Data:    &protoc.PublicRsp_Data{},
 	}, nil
 }
 
-func (pr PublicRpc) GetCountry(ctx context.Context, req *proto.PublicReq) (rsp *proto.GetCountryRsp, err error) {
+func (pr PublicRpc) GetCountry(ctx context.Context, req *protoc.PublicReq) (rsp *protoc.GetCountryRsp, err error) {
 	// 查询国家数据
 	var country = models.Country{}
 	list, err := country.List()
 	if err != nil {
 		logger.Logger.Errorf("GetCountry country.List err:%v", err)
-		return &proto.GetCountryRsp{
+		return &protoc.GetCountryRsp{
 			Code:    constant.SYSTEM_ERROR,
 			Message: constant.CodeMap[constant.SYSTEM_ERROR],
+			Data:    []*protoc.GetCountryRsp_Data{},
 		}, nil
 	}
-	var result []*proto.GetCountryRsp_Country
+	var result []*protoc.GetCountryRsp_Data
 	for _, item := range list {
-		result = append(result, &proto.GetCountryRsp_Country{
+		result = append(result, &protoc.GetCountryRsp_Data{
 			Id:            item.ID,
 			Name:          item.Name,
 			ChineseName:   item.ChineseName,
@@ -109,9 +123,9 @@ func (pr PublicRpc) GetCountry(ctx context.Context, req *proto.PublicReq) (rsp *
 			TelephoneCode: item.TelephoneCode,
 		})
 	}
-	return &proto.GetCountryRsp{
+	return &protoc.GetCountryRsp{
 		Code:    constant.SUCCESS,
 		Message: constant.CodeMap[constant.SYSTEM_ERROR],
-		Country: result,
+		Data:    result,
 	}, nil
 }

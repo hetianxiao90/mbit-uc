@@ -30,11 +30,10 @@ type Client struct {
 var NacosClient *Client
 
 type ClientOptions struct {
-	ServerAddr      string
-	Namespace       string
-	DataId          string
-	ConfigGroupName string
-	NameGroupName   string
+	ServerAddr string
+	Namespace  string
+	DataId     string
+	GroupName  string
 }
 
 func Init() {
@@ -52,11 +51,10 @@ func Init() {
 
 	// 初始化Nacos配置
 	client, err := NewNacosClient(&ClientOptions{
-		ServerAddr:      endpoints,
-		Namespace:       envApp,
-		DataId:          "user_config.yaml",
-		ConfigGroupName: "USER_GROUP",
-		NameGroupName:   "DEFAULT_GROUP",
+		ServerAddr: endpoints,
+		Namespace:  envApp,
+		DataId:     "user_config.yaml",
+		GroupName:  "DEFAULT_GROUP",
 	})
 
 	if err != nil {
@@ -101,7 +99,7 @@ func NewNacosClient(co *ClientOptions) (*Client, error) {
 		constant.WithNotLoadCacheAtStart(true),
 		constant.WithLogDir("/tmp/nacos/log"),
 		constant.WithCacheDir("/tmp/nacos/cache"),
-		constant.WithLogLevel("warn"),
+		constant.WithLogLevel("debug"),
 	)
 	param := vo.NacosClientParam{
 		ClientConfig:  &clientConfig,
@@ -130,7 +128,7 @@ func (nc *Client) GetConfig() (string, error) {
 	// 获取配置
 	content, err := nc.configClient.GetConfig(vo.ConfigParam{
 		DataId: nc.DataId,
-		Group:  nc.ConfigGroupName,
+		Group:  nc.GroupName,
 	})
 	if err != nil {
 		return "", err
@@ -138,7 +136,7 @@ func (nc *Client) GetConfig() (string, error) {
 	go func() {
 		err = nc.configClient.ListenConfig(vo.ConfigParam{
 			DataId: nc.DataId,
-			Group:  nc.ConfigGroupName,
+			Group:  nc.GroupName,
 			OnChange: func(namespace, group, dataId, data string) {
 				dataByte := []byte(data)
 				if err = viper.MergeConfig(bytes.NewBuffer(dataByte)); err != nil {
@@ -155,7 +153,7 @@ func (nc *Client) RegisterInstance(serviceName, ip string, port uint64) error {
 		Ip:          ip,
 		Port:        port,
 		ServiceName: serviceName,
-		GroupName:   nc.NameGroupName,
+		GroupName:   nc.GroupName,
 		Weight:      10,
 		Enable:      true,
 		Healthy:     true,
@@ -173,7 +171,7 @@ func (nc *Client) DeregisterInstance(serviceName, ip string, port uint64) error 
 		Ip:          ip,
 		Port:        port,
 		ServiceName: serviceName,
-		GroupName:   nc.NameGroupName,
+		GroupName:   nc.GroupName,
 		Ephemeral:   true,
 	}
 	success, err := nc.nameClient.DeregisterInstance(param)
@@ -187,7 +185,7 @@ func (nc *Client) GetAllInstances() (serviceList model.ServiceList, err error) {
 
 	param := vo.GetAllServiceInfoParam{
 		NameSpace: nc.Namespace,
-		GroupName: nc.NameGroupName,
+		GroupName: nc.GroupName,
 		PageNo:    10,
 		PageSize:  10,
 	}
@@ -202,7 +200,7 @@ func (nc *Client) GetAllInstances() (serviceList model.ServiceList, err error) {
 func (nc *Client) WatchService(serviceName string, callback func(services []model.Instance)) error {
 	err := nc.nameClient.Subscribe(&vo.SubscribeParam{
 		ServiceName: serviceName,
-		GroupName:   nc.NameGroupName,
+		GroupName:   nc.GroupName,
 		SubscribeCallback: func(services []model.Instance, err error) {
 			callback(services)
 		},

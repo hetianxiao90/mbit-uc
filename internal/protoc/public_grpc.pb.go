@@ -4,7 +4,7 @@
 // - protoc             v5.27.1
 // source: public.proto
 
-package proto
+package protoc
 
 import (
 	context "context"
@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	Public_GetCaptcha_FullMethodName  = "/protoc.Public/GetCaptcha"
-	Public_PostCaptcha_FullMethodName = "/protoc.Public/PostCaptcha"
-	Public_GetCountry_FullMethodName  = "/protoc.Public/GetCountry"
+	Public_GetCaptcha_FullMethodName  = "/proto.Public/GetCaptcha"
+	Public_PostCaptcha_FullMethodName = "/proto.Public/PostCaptcha"
+	Public_GetCountry_FullMethodName  = "/proto.Public/GetCountry"
 )
 
 // PublicClient is the client API for Public service.
@@ -171,7 +171,7 @@ func _Public_GetCountry_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Public_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "protoc.Public",
+	ServiceName: "proto.Public",
 	HandlerType: (*PublicServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -4,7 +4,7 @@
 // - protoc             v5.27.1
 // source: uc.proto
 
-package proto
+package protoc
 
 import (
 	context "context"
@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	Uc_GetEmailCode_FullMethodName  = "/protoc.Uc/GetEmailCode"
-	Uc_PostEmailCode_FullMethodName = "/protoc.Uc/PostEmailCode"
-	Uc_Register_FullMethodName      = "/protoc.Uc/Register"
-	Uc_Login_FullMethodName         = "/protoc.Uc/Login"
-	Uc_GetUserInfo_FullMethodName   = "/protoc.Uc/GetUserInfo"
+	Uc_GetEmailCode_FullMethodName  = "/proto.Uc/GetEmailCode"
+	Uc_PostEmailCode_FullMethodName = "/proto.Uc/PostEmailCode"
+	Uc_Register_FullMethodName      = "/proto.Uc/Register"
+	Uc_Login_FullMethodName         = "/proto.Uc/Login"
+	Uc_GetUserInfo_FullMethodName   = "/proto.Uc/GetUserInfo"
 )
 
 // UcClient is the client API for Uc service.
@@ -39,7 +39,7 @@ type UcClient interface {
 	// 登录
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginRsp, error)
 	// 获取个人信息
-	GetUserInfo(ctx context.Context, in *UcReq, opts ...grpc.CallOption) (*GetUserInfoRsp, error)
+	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoRsp, error)
 }
 
 type ucClient struct {
@@ -90,7 +90,7 @@ func (c *ucClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOpt
 	return out, nil
 }
 
-func (c *ucClient) GetUserInfo(ctx context.Context, in *UcReq, opts ...grpc.CallOption) (*GetUserInfoRsp, error) {
+func (c *ucClient) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoRsp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserInfoRsp)
 	err := c.cc.Invoke(ctx, Uc_GetUserInfo_FullMethodName, in, out, cOpts...)
@@ -113,7 +113,7 @@ type UcServer interface {
 	// 登录
 	Login(context.Context, *LoginReq) (*LoginRsp, error)
 	// 获取个人信息
-	GetUserInfo(context.Context, *UcReq) (*GetUserInfoRsp, error)
+	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoRsp, error)
 	mustEmbedUnimplementedUcServer()
 }
 
@@ -133,7 +133,7 @@ func (UnimplementedUcServer) Register(context.Context, *RegisterReq) (*LoginRsp,
 func (UnimplementedUcServer) Login(context.Context, *LoginReq) (*LoginRsp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUcServer) GetUserInfo(context.Context, *UcReq) (*GetUserInfoRsp, error) {
+func (UnimplementedUcServer) GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoRsp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
 func (UnimplementedUcServer) mustEmbedUnimplementedUcServer() {}
@@ -222,7 +222,7 @@ func _Uc_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{
 }
 
 func _Uc_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UcReq)
+	in := new(GetUserInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -234,7 +234,7 @@ func _Uc_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: Uc_GetUserInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UcServer).GetUserInfo(ctx, req.(*UcReq))
+		return srv.(UcServer).GetUserInfo(ctx, req.(*GetUserInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -243,7 +243,7 @@ func _Uc_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(inte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Uc_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "protoc.Uc",
+	ServiceName: "proto.Uc",
 	HandlerType: (*UcServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
-	proto "uc/internal/protoc"
+	"uc/internal/protoc"
 	"uc/internal/rpc"
 	"uc/pkg/email"
 	"uc/pkg/jwt"
@@ -38,8 +38,8 @@ func main() {
 		return
 	}
 	s := grpc.NewServer()
-	proto.RegisterUcServer(s, &rpc.UserRpc{})
-	proto.RegisterPublicServer(s, &rpc.PublicRpc{})
+	protoc.RegisterUcServer(s, &rpc.UserRpc{})
+	protoc.RegisterPublicServer(s, &rpc.PublicRpc{})
 	nacos.RegisterInstance()
 	fmt.Println("Serving start...")
 	err = s.Serve(listen)
